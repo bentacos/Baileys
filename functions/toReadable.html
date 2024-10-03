@@ -19,55 +19,14 @@
 <ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="toReadable"><span class="tsd-kind-call-signature">to<wbr/>Readable</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">buffer</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Readable</span><a href="#toReadable" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>referenced from and modifying <a href="https://github.com/wppconnect-team/wa-js/blob/main/src/chat/functions/prepareAudioWaveform.ts">https://github.com/wppconnect-team/wa-js/blob/main/src/chat/functions/prepareAudioWaveform.ts</a></p>
-<p>export async function getAudioWaveform(buffer: Buffer | string | Readable, logger?: Logger) {
-try {
-const audioDecode = (buffer: Buffer | ArrayBuffer | Uint8Array) =&gt; import(&#39;audio-decode&#39;).then(({ default: audioDecode }) =&gt; audioDecode(buffer))
-let audioData: Buffer
-if(Buffer.isBuffer(buffer)) {
-    audioData = buffer
-} else if(typeof buffer === &#39;string&#39;) {
-    const rStream = createReadStream(buffer)
-    audioData = await toBuffer(rStream)
-} else {
-    audioData = await toBuffer(buffer)
-}</p>
-<p>const audioBuffer = await audioDecode(audioData)</p>
-<p>const rawData = audioBuffer.getChannelData(0) // We only need to work with one channel of data
-const samples = 64 // Number of samples we want to have in our final data set
-const blockSize = Math.floor(rawData.length / samples) // the number of samples in each subdivision
-const filteredData: number[] = []
-for(let i = 0; i &lt; samples; i++) {
-      const blockStart = blockSize * i // the location of the first sample in the block
-      let sum = 0
-      for(let j = 0; j &lt; blockSize; j++) {
-        sum = sum + Math.abs(rawData[blockStart + j]) // find the sum of all the samples in the block
-    }</p>
-<pre><code><span class="hl-0">filteredData</span><span class="hl-1">.</span><span class="hl-6">push</span><span class="hl-1">(</span><span class="hl-0">sum</span><span class="hl-1"> / </span><span class="hl-0">blockSize</span><span class="hl-1">) </span><span class="hl-8">// divide the sum by the block size to get the average</span>
-</code><button>Copy</button></pre>
-<p>}</p>
-<p>// This guarantees that the largest data point will be set to 1, and the rest of the data will scale proportionally.
-const multiplier = Math.pow(Math.max(...filteredData), -1)
-const normalizedData = filteredData.map((n) =&gt; n * multiplier)</p>
-<p>// Generate waveform like WhatsApp
-const waveform = new Uint8Array(
-    normalizedData.map((n) =&gt; Math.floor(100 * n))
-)</p>
-<p>return waveform
-} catch(e) {
-logger?.debug(&#39;Failed to generate waveform: &#39; + e)
-}
-}</p>
-</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5><span class="tsd-kind-parameter">buffer</span>: <span class="tsd-signature-type ">Buffer</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Readable</span></h4>
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Readable</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/bentacos/Baileys/blob/d68c10d/src/Utils/messages-media.ts#L256">src/Utils/messages-media.ts:256</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/bentacos/Baileys/blob/47b2f6d/src/Utils/messages-media.ts#L255">src/Utils/messages-media.ts:255</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -343,6 +302,7 @@ logger?.debug(&#39;Failed to generate waveform: &#39; + e)
 <li><a href="getAggregateVotesInPollMessage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Aggregate<wbr/>Votes<wbr/>In<wbr/>Poll<wbr/>Message</span></a></li>
 <li><a href="getAllBinaryNodeChildren.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>All<wbr/>Binary<wbr/>Node<wbr/>Children</span></a></li>
 <li><a href="getAudioDuration.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Audio<wbr/>Duration</span></a></li>
+<li><a href="getAudioWaveform.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Audio<wbr/>Waveform</span></a></li>
 <li><a href="getBinaryNodeChild.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Binary<wbr/>Node<wbr/>Child</span></a></li>
 <li><a href="getBinaryNodeChildBuffer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Binary<wbr/>Node<wbr/>Child<wbr/>Buffer</span></a></li>
 <li><a href="getBinaryNodeChildString.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Binary<wbr/>Node<wbr/>Child<wbr/>String</span></a></li>
