@@ -206,7 +206,7 @@ export async function getAudioDuration(buffer: Buffer | string | Readable) {
 
 /**
   referenced from and modifying https://github.com/wppconnect-team/wa-js/blob/main/src/chat/functions/prepareAudioWaveform.ts
- */
+  
 export async function getAudioWaveform(buffer: Buffer | string | Readable, logger?: Logger) {
 	try {
 		const audioDecode = (buffer: Buffer | ArrayBuffer | Uint8Array) => import('audio-decode').then(({ default: audioDecode }) => audioDecode(buffer))
@@ -250,6 +250,7 @@ export async function getAudioWaveform(buffer: Buffer | string | Readable, logge
 		logger?.debug('Failed to generate waveform: ' + e)
 	}
 }
+*/
 
 
 export const toReadable = (buffer: Buffer) => {
@@ -475,107 +476,127 @@ export const downloadContentFromMessage = (
  * Decrypts and downloads an AES256-CBC encrypted file given the keys.
  * Assumes the SHA256 of the plaintext is appended to the end of the ciphertext
  * */
-export const downloadEncryptedContent = async(
-	downloadUrl: string,
-	{ cipherKey, iv }: MediaDecryptionKeyInfo,
-	{ startByte, endByte, options }: MediaDownloadOptions = { }
+export const downloadEncryptedContent = async (
+  downloadUrl: string,
+  { cipherKey, iv }: MediaDecryptionKeyInfo,
+  { startByte, endByte, options }: MediaDownloadOptions = {}
 ) => {
-	let bytesFetched = 0
-	let startChunk = 0
-	let firstBlockIsIV = false
-	// if a start byte is specified -- then we need to fetch the previous chunk as that will form the IV
-	if(startByte) {
-		const chunk = toSmallestChunkSize(startByte || 0)
-		if(chunk) {
-			startChunk = chunk - AES_CHUNK_SIZE
-			bytesFetched = chunk
+  let bytesFetched = 0;
+  let startChunk = 0;
+  let firstBlockIsIV = false;
 
-			firstBlockIsIV = true
-		}
-	}
+  // If a start byte is specified, fetch the previous chunk to form the IV
+  if (startByte) {
+    const chunk = toSmallestChunkSize(startByte || 0);
+    if (chunk) {
+      startChunk = chunk - AES_CHUNK_SIZE;
+      bytesFetched = chunk;
 
-	const endChunk = endByte ? toSmallestChunkSize(endByte || 0) + AES_CHUNK_SIZE : undefined
+      firstBlockIsIV = true;
+    }
+  }
 
-	const headers: AxiosRequestConfig['headers'] = {
-		...options?.headers || { },
-		Origin: DEFAULT_ORIGIN,
-	}
-	if(startChunk || endChunk) {
-		headers!.Range = `bytes=${startChunk}-`
-		if(endChunk) {
-			headers!.Range += endChunk
-		}
-	}
+  const endChunk = endByte
+    ? toSmallestChunkSize(endByte || 0) + AES_CHUNK_SIZE
+    : undefined;
 
-	// download the message
-	const fetched = await getHttpStream(
-		downloadUrl,
-		{
-			...options || { },
-			headers,
-			maxBodyLength: Infinity,
-			maxContentLength: Infinity,
-		}
-	)
+  const headers: AxiosRequestConfig['headers'] = {
+    ...options?.headers || {},
+    Origin: DEFAULT_ORIGIN,
+  };
 
-	let remainingBytes = Buffer.from([])
+  if (startChunk || endChunk) {
+    headers!.Range = `bytes=${startChunk}-`;
+    if (endChunk) {
+      headers!.Range += endChunk;
+    }
+  }
 
-	let aes: Crypto.Decipher
+  // Download the message
+  const fetched = await getHttpStream(downloadUrl, {
+    ...options || {},
+    headers,
+    maxBodyLength: Infinity,
+    maxContentLength: Infinity,
+  });
 
-	const pushBytes = (bytes: Buffer, push: (bytes: Buffer) => void) => {
-		if(startByte || endByte) {
-			const start = bytesFetched >= startByte! ? undefined : Math.max(startByte! - bytesFetched, 0)
-			const end = bytesFetched + bytes.length < endByte! ? undefined : Math.max(endByte! - bytesFetched, 0)
+  let remainingBytes = Buffer.from([]);
+  let aes: Crypto.Decipher;
 
-			push(bytes.slice(start, end))
+  const pushBytes = (bytes: Buffer, push: (bytes: Buffer) => void) => {
+    if (startByte || endByte) {
+      const start =
+        bytesFetched >= startByte! ? undefined : Math.max(startByte! - bytesFetched, 0);
+      const end =
+        bytesFetched + bytes.length < endByte!
+          ? undefined
+          : Math.max(endByte! - bytesFetched, 0);
 
-			bytesFetched += bytes.length
-		} else {
-			push(bytes)
-		}
-	}
+      push(bytes.slice(start, end));
 
-	const output = new Transform({
-		transform(chunk, _, callback) {
-			let data = Buffer.concat([remainingBytes, chunk])
+      bytesFetched += bytes.length;
+    } else {
+      push(bytes);
+    }
+  };
 
-			const decryptLength = toSmallestChunkSize(data.length)
-			remainingBytes = data.slice(decryptLength)
-			data = data.slice(0, decryptLength)
+  const output = new Transform({
+    transform(chunk, _, callback) {
+      let data = Buffer.concat([remainingBytes, chunk]);
 
-			if(!aes) {
-				let ivValue = iv
-				if(firstBlockIsIV) {
-					ivValue = data.slice(0, AES_CHUNK_SIZE)
-					data = data.slice(AES_CHUNK_SIZE)
-				}
+      const decryptLength = toSmallestChunkSize(data.length);
+      remainingBytes = data.slice(decryptLength);
+      data = data.slice(0, decryptLength);
 
-				aes = Crypto.createDecipheriv('aes-256-cbc', cipherKey, ivValue)
-				// if an end byte that is not EOF is specified
-				// stop auto padding (PKCS7) -- otherwise throws an error for decryption
-				if(endByte) {
-					aes.setAutoPadding(false)
-				}
+      // Initialize AES decryption if not done yet
+      if (!aes) {
+        let ivValue = iv;
+        if (firstBlockIsIV) {
+          ivValue = data.slice(0, AES_CHUNK_SIZE);
+          data = data.slice(AES_CHUNK_SIZE);
+        }
 
-			}
+        aes = Crypto.createDecipheriv('aes-256-cbc', cipherKey, ivValue);
 
-			try {
-				pushBytes(aes.update(data), b => this.push(b))
-				callback()
-			} catch(error) {
-				callback(error)
-			}
-		},
-		final(callback) {
-			try {
-				pushBytes(aes.final(), b => this.push(b))
-				callback()
-			} catch(error) {
-				callback(error)
-			}
-		},
-	})
-	return fetched.pipe(output, { end: true })
+        // Disable auto padding if endByte is specified
+        if (endByte) {
+          aes.setAutoPadding(false);
+        }
+      }
+
+      try {
+        // Attempt decryption and push the result
+        pushBytes(aes.update(data), (b) => this.push(b));
+        callback();
+      } catch (error) {
+        // Handle decryption errors without stopping the program
+        if (error.code === 'ERR_OSSL_EVP_BAD_DECRYPT') {
+          //console.error('Decryption error: ERR_OSSL_EVP_BAD_DECRYPT. Skipping this chunk.');
+          // Skip the current chunk but continue processing the stream
+          callback(null);
+        } else {
+          callback(error); // Handle any other errors
+        }
+      }
+    },
+    final(callback) {
+      try {
+        // Attempt to finalize decryption
+        pushBytes(aes.final(), (b) => this.push(b));
+        callback();
+      } catch (error) {
+        // Handle final decryption error without stopping the program
+        if (error.code === 'ERR_OSSL_EVP_BAD_DECRYPT') {
+          //console.error('Final decryption error: ERR_OSSL_EVP_BAD_DECRYPT. Ignoring final chunk.');
+          callback(null); // Ignore error and proceed to finish the stream
+        } else {
+          callback(error); // Handle any other errors
+        }
+      }
+    },
+  });
+
+  return fetched.pipe(output, { end: true });
 }
 
 export function extensionForMediaMessage(message: WAMessageContent) {
@@ -647,7 +668,7 @@ export const getWAUploadToServer = (
 					throw new Error(`upload failed, reason: ${JSON.stringify(result)}`)
 				}
 			} catch(error) {
-				if(axios.isAxiosError(error)) {
+				if(error.response) {
 					result = error.response?.data
 				}
 
