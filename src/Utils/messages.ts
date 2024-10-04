@@ -27,7 +27,7 @@ import {
 import { isJidGroup, isJidStatusBroadcast, jidNormalizedUser } from '../WABinary'
 import { sha256 } from './crypto'
 import { generateMessageID, getKeyAuthor, unixTimestampSeconds } from './generics'
-import { downloadContentFromMessage, encryptedStream, generateThumbnail, getAudioDuration, getAudioWaveform, MediaDownloadOptions } from './messages-media'
+import { downloadContentFromMessage, encryptedStream, generateThumbnail, getAudioDuration, MediaDownloadOptions } from './messages-media'
 
 type MediaUploadData = {
 	media: WAMediaUpload
@@ -199,21 +199,6 @@ export const prepareWAMessageMedia = async(
 					}
 
 					logger?.debug('generated thumbnail')
-				}
-
-				if(requiresDurationComputation) {
-					uploadData.seconds = await getAudioDuration(bodyPath!)
-					logger?.debug('computed audio duration')
-				}
-
-				if(requiresWaveformProcessing) {
-					uploadData.waveform = await getAudioWaveform(bodyPath!, logger)
-					logger?.debug('processed waveform')
-				}
-
-				if(requiresWaveformProcessing) {
-					uploadData.waveform = await getAudioWaveform(bodyPath!, logger)
-					logger?.debug('processed waveform')
 				}
 
 				if(requiresAudioBackground) {
