@@ -568,15 +568,8 @@ export const downloadEncryptedContent = async (
         // Attempt decryption and push the result
         pushBytes(aes.update(data), (b) => this.push(b));
         callback();
-      } catch (error) {
+      } catch {
         // Handle decryption errors without stopping the program
-        if (error.code === 'ERR_OSSL_EVP_BAD_DECRYPT') {
-          //console.error('Decryption error: ERR_OSSL_EVP_BAD_DECRYPT. Skipping this chunk.');
-          // Skip the current chunk but continue processing the stream
-          callback(null);
-        } else {
-          callback(error); // Handle any other errors
-        }
       }
     },
     final(callback) {
@@ -584,14 +577,8 @@ export const downloadEncryptedContent = async (
         // Attempt to finalize decryption
         pushBytes(aes.final(), (b) => this.push(b));
         callback();
-      } catch (error) {
+      } catch {
         // Handle final decryption error without stopping the program
-        if (error.code === 'ERR_OSSL_EVP_BAD_DECRYPT') {
-          //console.error('Final decryption error: ERR_OSSL_EVP_BAD_DECRYPT. Ignoring final chunk.');
-          callback(null); // Ignore error and proceed to finish the stream
-        } else {
-          callback(error); // Handle any other errors
-        }
       }
     },
   });
