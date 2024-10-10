@@ -437,8 +437,6 @@ export const encryptedStream = async(
 		}
 
 		//throw error
-
-		return null;
 	}
 
 	function onChunk(buff: Buffer) {
