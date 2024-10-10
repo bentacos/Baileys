@@ -436,7 +436,19 @@ export const encryptedStream = async(
 			}
 		}
 
-		throw error
+		// Return an object with default empty values
+		return {
+			mediaKey: Buffer.alloc(0),           // Empty Buffer
+			encWriteStream: new Readable({       // Empty Readable stream
+				read() {}
+			}),
+			bodyPath: '',                        // Empty string for path
+			mac: Buffer.alloc(0),                // Empty Buffer
+			fileEncSha256: Buffer.alloc(0),      // Empty Buffer
+			fileSha256: Buffer.alloc(0),         // Empty Buffer
+			fileLength: 0,                       // Zero length
+			didSaveToTmpPath: false              // Default to false
+		};
 	}
 
 	function onChunk(buff: Buffer) {
