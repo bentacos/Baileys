@@ -432,11 +432,13 @@ export const encryptedStream = async(
 			try {
 				await fs.unlink(bodyPath!)
 			} catch(err) {
-				logger?.error({ err }, 'failed to save to tmp path')
+				//logger?.error({ err }, 'failed to save to tmp path')
 			}
 		}
 
-		throw error
+		//throw error
+
+		return null;
 	}
 
 	function onChunk(buff: Buffer) {
