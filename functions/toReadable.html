@@ -22,7 +22,7 @@
 <div class="tsd-comment tsd-typography"><p>referenced from and modifying <a href="https://github.com/wppconnect-team/wa-js/blob/main/src/chat/functions/prepareAudioWaveform.ts">https://github.com/wppconnect-team/wa-js/blob/main/src/chat/functions/prepareAudioWaveform.ts</a></p>
 <p>export async function getAudioWaveform(buffer: Buffer | string | Readable, logger?: Logger) {
 try {
-const audioDecode = (buffer: Buffer | ArrayBuffer | Uint8Array) =&gt; import(&#39;audio-decode&#39;).then(({ default: audioDecode }) =&gt; audioDecode(buffer))
+const { default: decoder } = await eval(&#39;import(&#39;audio-decode&#39;)&#39;)
 let audioData: Buffer
 if(Buffer.isBuffer(buffer)) {
     audioData = buffer
@@ -32,7 +32,7 @@ if(Buffer.isBuffer(buffer)) {
 } else {
     audioData = await toBuffer(buffer)
 }</p>
-<p>const audioBuffer = await audioDecode(audioData)</p>
+<p>const audioBuffer = await decoder(audioData)</p>
 <p>const rawData = audioBuffer.getChannelData(0) // We only need to work with one channel of data
 const samples = 64 // Number of samples we want to have in our final data set
 const blockSize = Math.floor(rawData.length / samples) // the number of samples in each subdivision
@@ -67,7 +67,7 @@ logger?.debug(&#39;Failed to generate waveform: &#39; + e)
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Readable</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/bentacos/Baileys/blob/2e6644d/src/Utils/messages-media.ts#L256">src/Utils/messages-media.ts:256</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/bentacos/Baileys/blob/5bd7024/src/Utils/messages-media.ts#L256">src/Utils/messages-media.ts:256</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
