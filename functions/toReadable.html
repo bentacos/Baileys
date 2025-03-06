@@ -43,7 +43,7 @@ for(let i = 0; i &lt; samples; i++) {
       for(let j = 0; j &lt; blockSize; j++) {
         sum = sum + Math.abs(rawData[blockStart + j]) // find the sum of all the samples in the block
     }</p>
-<pre><code><span class="hl-0">filteredData</span><span class="hl-1">.</span><span class="hl-7">push</span><span class="hl-1">(</span><span class="hl-0">sum</span><span class="hl-1"> / </span><span class="hl-0">blockSize</span><span class="hl-1">) </span><span class="hl-8">// divide the sum by the block size to get the average</span>
+<pre><code><span class="hl-0">filteredData</span><span class="hl-1">.</span><span class="hl-2">push</span><span class="hl-1">(</span><span class="hl-0">sum</span><span class="hl-1"> / </span><span class="hl-0">blockSize</span><span class="hl-1">) </span><span class="hl-3">// divide the sum by the block size to get the average</span>
 </code><button>Copy</button></pre>
 <p>}</p>
 <p>// This guarantees that the largest data point will be set to 1, and the rest of the data will scale proportionally.
@@ -67,7 +67,7 @@ logger?.debug(&#39;Failed to generate waveform: &#39; + e)
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Readable</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/bentacos/Baileys/blob/796ee63/src/Utils/messages-media.ts#L255">src/Utils/messages-media.ts:255</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/bentacos/Baileys/blob/8e37584/src/Utils/messages-media.ts#L255">src/Utils/messages-media.ts:255</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
