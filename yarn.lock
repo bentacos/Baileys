@@ -2051,14 +2051,13 @@ await-to-js@^3.0.0:
   resolved "https://registry.yarnpkg.com/await-to-js/-/await-to-js-3.0.0.tgz#70929994185616f4675a91af6167eb61cc92868f"
   integrity sha512-zJAaP9zxTcvTHRlejau3ZOY4V7SRpiByf3/dxx2uyKxxor19tpmpV2QRsTKikckwhaPmr2dVpxxMr7jOCYVp5g==
 
-axios@^1.6.0:
-  version "1.7.7"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.7.7.tgz#2f554296f9892a72ac8d8e4c5b79c14a91d0a47f"
-  integrity sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==
+axios@^0.27.2:
+  version "0.27.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.27.2.tgz#207658cc8621606e586c85db4b41a750e756d972"
+  integrity sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==
   dependencies:
-    follow-redirects "^1.15.6"
+    follow-redirects "^1.14.9"
     form-data "^4.0.0"
-    proxy-from-env "^1.1.0"
 
 babel-jest@^29.7.0:
   version "29.7.0"

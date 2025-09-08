@@ -235,9 +235,11 @@ export async function getAudioDuration(buffer: Buffer | string | Readable) {
 	return metadata.format.duration
 }
 
+/*
 /**
   referenced from and modifying https://github.com/wppconnect-team/wa-js/blob/main/src/chat/functions/prepareAudioWaveform.ts
  */
+/*
 export async function getAudioWaveform(buffer: Buffer | string | Readable, logger?: ILogger) {
 	try {
 		const { default: decoder } = await eval("import('audio-decode')")
@@ -279,6 +281,7 @@ export async function getAudioWaveform(buffer: Buffer | string | Readable, logge
 		logger?.debug('Failed to generate waveform: ' + e)
 	}
 }
+*/
 
 export const toReadable = (buffer: Buffer) => {
 	const readable = new Readable({ read: () => {} })

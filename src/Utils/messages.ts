@@ -31,7 +31,7 @@ import {
 	encryptedStream,
 	generateThumbnail,
 	getAudioDuration,
-	getAudioWaveform,
+	// getAudioWaveform,
 	getRawMediaUploadData,
 	MediaDownloadOptions
 } from './messages-media'
@@ -252,10 +252,10 @@ export const prepareWAMessageMedia = async (
 					logger?.debug('computed audio duration')
 				}
 
-				if (requiresWaveformProcessing) {
-					uploadData.waveform = await getAudioWaveform(originalFilePath!, logger)
-					logger?.debug('processed waveform')
-				}
+				// if (requiresWaveformProcessing) {
+				//	uploadData.waveform = await getAudioWaveform(originalFilePath!, logger)
+				//	logger?.debug('processed waveform')
+				// }
 
 				if (requiresAudioBackground) {
 					uploadData.backgroundArgb = await assertColor(options.backgroundColor)
